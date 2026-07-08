@@ -14,10 +14,10 @@ sudo apt install ffmpeg
 tmux new-session -d -s "dsss" -n "gpu" "nvtop"
 # tmux new-window -t "dsss" -n "redis" "redis-server --bind 127.0.0.1 --requirepass mypassword"
 tmux new-window -t "dsss" -n "llm" "./llm.sh"
-tmux new-window -t "dsss" -n "stt" "./stt.sh"
 tmux new-window -t "dsss" -n "musicbox" "./musicbox.sh"
 tmux new-window -t "dsss" -n "photobooth" "./photobooth.sh"
 tmux new-window -t "dsss" -n "montage" "./montage.sh"
+tmux new-window -t "dsss" -n "stt" "./stt.sh"
 ```
 
 ## LLM
@@ -40,11 +40,20 @@ docker run -it --rm --name gemma4 \
     --reasoning-parser gemma4 \
     --tool-call-parser gemma4 \
     --limit-mm-per-prompt '{"image": 4, "audio": 1}' \
-    --speculative-config '{"method":"mtp","model":"google/gemma-4-12B-it-assistant","num_speculative_tokens":2}' \
+    --speculative-config '{"method":"mtp","model":"google/gemma-4-12B-it-assistant","num_speculative_tokens":4}' \
     --async-scheduling \
     --host 0.0.0.0 \
     --port 8000
 
+export API_HOST="100.91.96.77"
+curl http://$API_HOST:8000/v1/models | jq
+curl http://$API_HOST:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "google/gemma-4-12B-it",
+    "messages": [{"role": "user", "content": "Tell me a story"}]
+  }' | jq
+  
 docker run -it --rm --name gemma4 \
   --ipc=host --network host --shm-size 16G --gpus all \
   -v ~/.cache/huggingface:/root/.cache/huggingface \
@@ -61,20 +70,9 @@ docker run -it --rm --name gemma4 \
     --async-scheduling \
     --host 0.0.0.0 \
     --port 8000
-
-
---chat-template examples/tool_chat_template_gemma4.jinja \
-vllm/vllm-openai:gemma4-unified \
-
     
 export API_HOST="100.91.96.77"
-curl http://$API_HOST:8000/v1/models | jq
-curl http://$API_HOST:8000/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "google/gemma-4-12B-it",
-    "messages": [{"role": "user", "content": "Hello!"}]
-  }' | jq
+curl http://$API_HOST:8000/v1/models | jq  
 curl http://$API_HOST:8000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{

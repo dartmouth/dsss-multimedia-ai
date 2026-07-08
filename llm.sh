@@ -13,7 +13,7 @@ docker run -it --rm --name gemma4 \
     --reasoning-parser gemma4 \
     --tool-call-parser gemma4 \
     --limit-mm-per-prompt '{"image": 4, "audio": 1}' \
-    --speculative-config '{"method":"mtp","model":"google/gemma-4-12B-it-assistant","num_speculative_tokens":1}' \
+    --speculative-config '{"method":"mtp","model":"google/gemma-4-12B-it-assistant","num_speculative_tokens":4}' \
     --async-scheduling \
     --host 0.0.0.0 \
     --port 8000

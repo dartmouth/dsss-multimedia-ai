@@ -49,12 +49,6 @@ def generate_random_string(length=8):
 app = FastAPI(title="Minimalist API", version="1.0.0")
 
 
-@app.get("/")
-async def root():
-    """Root endpoint returning a welcome message."""
-    return {"message": "Welcome to the Minimalist FastAPI Application"}
-
-
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
